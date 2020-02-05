@@ -1,5 +1,6 @@
 ﻿using KanbanTasker.ViewModels;
 using System;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -63,29 +64,18 @@ namespace KanbanTasker.Views
             ActiveFlyout.Hide();
         }
 
-        private void EditBoardFlyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+        private async void BtnCompactOverlay_Click(object sender, RoutedEventArgs e)
         {
-            // Call VM method to reset current board to tmpBoard if user clicks away 
-            if (txtBoxNewBoardName.Text == "" && txtBoxNewBoardName.Text == "")
-                ViewModel.SetCurrentBoardOnClose();
-            else if (txtBoxNewBoardName.Text == "")
-                ViewModel.SetCurrentBoardOnClose();
-            else if (txtBoxNewBoardNotes.Text == "")
-                ViewModel.SetCurrentBoardOnClose();
-        }
-
-        private void FlyoutBtnCreateNewBoard_Click(object sender, RoutedEventArgs e)
-        {
-            if (txtBoxNewBoardName.Text == "")
-                ChooseBoardNameTeachingTip.IsOpen = true;
-            if (txtBoxNewBoardNotes.Text == "")
-                AddBoardNotesTeachingTip.IsOpen = true;
-            if (txtBoxNewBoardName.Text != "" && txtBoxNewBoardNotes.Text != "")
+            var view = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
+            if (view.ViewMode == ApplicationViewMode.Default)
             {
-                if (ActiveFlyout == null)
-                    return;
-
-                ActiveFlyout.Hide();
+                btnCompactOverlay.Icon = new SymbolIcon((Symbol)0xE944);
+                await view.TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
+            }
+            else
+            {
+                btnCompactOverlay.Icon = new SymbolIcon((Symbol)0xE8A7);
+                await view.TryEnterViewModeAsync(ApplicationViewMode.Default);
             }
         }
     }

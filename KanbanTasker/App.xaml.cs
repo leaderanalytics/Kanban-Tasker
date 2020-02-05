@@ -19,6 +19,9 @@ using System.Threading.Tasks;
 using KanbanTasker.Views;
 using System.Linq;
 using KanbanTasker.Model;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace KanbanTasker
 {
@@ -83,6 +86,8 @@ namespace KanbanTasker
             foreach (IEndPointConfiguration ep in endPoints.Where(x => x.EndPointType == EndPointType.DBMS))
                 Task.Run(() => databaseUtilities.CreateOrUpdateDatabase(ep)).Wait();
 
+            AppCenter.Start("a57ee001-5ab0-46f5-aa5a-4d1b84cd6b66",
+                   typeof(Analytics), typeof(Crashes));
         }
 
         public static MainViewModel GetViewModel(Frame frame, InAppNotification messagePump)
@@ -151,11 +156,11 @@ namespace KanbanTasker
                 titleBar.ButtonInactiveForegroundColor = Windows.UI.Colors.White;
                 titleBar.ButtonInactiveBackgroundColor = Windows.UI.Colors.Transparent;
 
-                checkUpdate();
+                CheckForUpdateOrFirstRun();
             }
         }
 
-        public async void checkUpdate()
+        public async void CheckForUpdateOrFirstRun()
         {
             if (SystemInformation.IsAppUpdated)
             {
